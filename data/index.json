@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-19T03:24:54Z",
-  "count": 8,
-  "recommenderCount": 2,
+  "generatedAt": "2026-09-19T03:31:57Z",
+  "count": 9,
+  "recommenderCount": 3,
   "tags": [
     [
       "剧情",
@@ -22,6 +22,14 @@
     [
       "治愈",
       2
+    ],
+    [
+      "测试",
+      1
+    ],
+    [
+      "自动化",
+      1
     ],
     [
       "长镜头",
@@ -46,6 +54,10 @@
   ],
   "actors": [
     [
+      "测试演员",
+      1
+    ],
+    [
       "示例演员甲",
       1
     ],
@@ -67,6 +79,31 @@
     ]
   ],
   "entries": [
+    {
+      "code": "E2E-999",
+      "title": "端到端测试条目",
+      "actors": [
+        "测试演员"
+      ],
+      "tags": [
+        "测试",
+        "自动化"
+      ],
+      "studio": "测试厂牌",
+      "releaseDate": "2026-09-19",
+      "sourceUrl": "https://example.com/e2e",
+      "score": 9.5,
+      "recommendations": [
+        {
+          "login": "derecat",
+          "reason": "这是一条端到端测试投稿，用于验证 Issue 到网站的全链路自动入库是否正常工作。",
+          "score": 9.5,
+          "at": "2026-09-19T03:31:57Z"
+        }
+      ],
+      "createdAt": "2026-09-19T03:31:57Z",
+      "updatedAt": "2026-09-19T03:31:57Z"
+    },
     {
       "code": "ABC-101",
       "title": "雨夜电车",

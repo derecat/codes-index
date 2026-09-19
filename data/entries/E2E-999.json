@@ -1,0 +1,25 @@
+{
+  "code": "E2E-999",
+  "title": "端到端测试条目",
+  "actors": [
+    "测试演员"
+  ],
+  "tags": [
+    "测试",
+    "自动化"
+  ],
+  "studio": "测试厂牌",
+  "releaseDate": "2026-09-19",
+  "sourceUrl": "https://example.com/e2e",
+  "score": 9.5,
+  "recommendations": [
+    {
+      "login": "derecat",
+      "reason": "这是一条端到端测试投稿，用于验证 Issue 到网站的全链路自动入库是否正常工作。",
+      "score": 9.5,
+      "at": "2026-09-19T03:31:57Z"
+    }
+  ],
+  "createdAt": "2026-09-19T03:31:57Z",
+  "updatedAt": "2026-09-19T03:31:57Z"
+}

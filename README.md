@@ -23,6 +23,8 @@
 
 ---
 
+---
+
 ## 30 秒看懂工作原理
 
 ```
@@ -38,6 +40,8 @@
 
 ---
 
+---
+
 ## 目录结构
 
 ```
@@ -46,13 +50,13 @@
 │   ├── entries/              # ⭐ 唯一数据源：一个番号一个文件
 │   │   ├── ABC-101.json
 │   │   └── XYZ-220.json
-│   └── index.json            # 自动生成的聚合索引，不要手改
+│   └── index.json            # ⚙️ 自动生成，已 .gitignore（部署时现场构建）
 ├── site/                     # GitHub Pages 站点（纯静态，零依赖）
 │   ├── index.html
 │   ├── style.css             # 亮色主题
 │   ├── app.js
 │   ├── config.js             # ⭐ 站点配置：仓库地址 + giscus 评论
-│   └── data/index.js         # 自动生成，把索引包成 JS 变量
+│   └── data/index.js         # ⚙️ 自动生成，已 .gitignore
 ├── scripts/
 │   ├── entrylib.py           # 共享逻辑：番号规范化 / 校验 / 合并
 │   ├── validate.py           # 校验器（CI 用）
@@ -81,6 +85,8 @@ Git 可以自动三方合并，永远不会撞车。代价只是需要一个脚�
 
 > 这个模式叫 **"file-per-record + build step"**，是开源数据集项目（awesome-xxx 系列、
 > shadcn 的 registry、Homebrew 的 formula）通用的做法。记住它，比记住任何语法都值钱。
+
+---
 
 ---
 
@@ -117,6 +123,8 @@ Git 可以自动三方合并，永远不会撞车。代价只是需要一个脚�
 - `reason`：**必填**，4–200 字。写「好看」「推荐」这种废话会被 CI 拦下来。
 - 同一个 GitHub 账号对同一个番号只保留最新一条推荐（改主意就重投，算改票不算刷票）。
 - `sourceUrl` 命中以下关键词会被直接拒绝：磁力、种子、网盘、`.mkv` / `.mp4` / `.zip` 等。
+
+---
 
 ---
 
@@ -181,15 +189,58 @@ grep -rn "derecat/codes-index" site/ .github/ README.md
 
 ---
 
-## 怎么投稿
+---
 
-打开 `Issues → New issue → 投稿一个车牌号`，填完提交。
+## 怎么投稿（三分钟，不需要懂代码）
 
-- 机器人几秒内校验、入库、回帖并关闭 Issue。
-- 失败了它会在 Issue 下面留言说明原因，**直接编辑 Issue 内容就会自动重试**（不用重开一个）。
-- 想改口？重新提一个 Issue 或在原 Issue 上编辑，同账号算改票。
+**你只需要一个 GitHub 账号。** 没有的话去 https://github.com/signup 注册，邮箱 + 密码，两分钟。
 
-维护者想人工干预时，直接编辑 `data/entries/xxx.json` 提 PR 即可，CI 会自动跑校验。
+### 手机 / 电脑都行，两种入口
+
+**入口 A：从网站进（推荐）**
+
+打开站点 → 底部或空列表里点「提一个投稿 Issue」→ 跳到表单。
+
+**入口 B：直接开表单**
+
+👉 https://github.com/derecat/codes-index/issues/new/choose
+
+### 然后照表单填
+
+| 字段 | 说明 |
+| --- | --- |
+| **车牌号** | 必填。照抄作品上的编号，`SSIS-123` 这样写。大小写、空格、下划线都无所谓，机器人会自动纠正 |
+| **作品标题** | 选填。不确定就留空，站点靠番号也能搜到 |
+| **演员 / 标签** | 选填。多个用英文逗号隔开 |
+| **评分** | 选填。0–10，可以带小数 |
+| **推荐理由** | **必填**，至少 4 个字。写「为什么值得看」，别写「好看」 |
+| **来源链接** | 选填。**只能填官方页或数据库条目页**，填网盘/磁力会被直接拒绝 |
+
+最后勾选「不含任何资源链接」的确认框，点 **Submit new issue**。
+
+### 提交之后
+
+大约 30 秒内，机器人会：
+
+1. 校验你填的内容
+2. 写进数据库
+3. 在这条 Issue 下面回一句「✅ 已收录 XXX」
+4. 自动关掉 Issue
+
+**你什么都不用再做。** 再等一分钟，站点上就能搜到了。
+
+### 如果机器人说失败了
+
+它会说明原因（理由太短 / 链接违规 / 番号格式不对）。
+
+**直接点 Issue 右上角的 `···` → Edit，改完保存，机器人会自动重试。**
+不用重新提一个新的。
+
+### 想改主意？
+
+重新提一次同样的番号就行。同一个账号对同一个番号只算一票，后一次的会覆盖前一次 —— 相当于改票。
+
+---
 
 ---
 
@@ -219,9 +270,23 @@ grep -rn "derecat/codes-index" site/ .github/ README.md
 
 ---
 
+---
+
+## 维护者怎么改数据
+
+直接编辑 `data/entries/xxx.json` 提 PR 即可，CI 会自动跑校验。
+
+---
+
+---
+
 ## 本地开发
 
 ```bash
+# ⚠️ 克隆下来后必须先跑 build_index.py：
+#    索引文件是派生产物，不在版本控制里，不跑的话页面会一片空白。
+python3 scripts/build_index.py
+
 python3 scripts/seed_demo.py      # 生成示例数据（不想要就 rm data/entries/*.json）
 python3 scripts/validate.py       # 全库校验
 python3 scripts/build_index.py    # 生成 data/index.json + site/data/index.js
@@ -230,6 +295,8 @@ python3 scripts/check_frontend.py # 前端自检：DOM 引用 / 脚本顺序 / �
 # 起个静态服务器看效果（评论功能必须有 http 才能加载）
 cd site && python3 -m http.server 8080
 ```
+
+---
 
 ---
 
@@ -250,6 +317,8 @@ cd site && python3 -m http.server 8080
 
 ---
 
+---
+
 ## 进阶玩法
 
 - **Discussions 做投票**：`tag: 提名` 的帖子用 👍 reaction 决定要不要收录。
@@ -259,6 +328,8 @@ cd site && python3 -m http.server 8080
 - **每周精选**：一个 cron Action，按 `recommendations.length` 和平均分生成周报 Issue。
 - **直接复用数据**：`data/index.json` 是干净 JSON，别人可以拿去自己搭站，
   这才是「大家都能推荐」的最终形态 —— 数据比站点活得久。
+
+---
 
 ## License
 

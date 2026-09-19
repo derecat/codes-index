@@ -1,0 +1,58 @@
+name: 数据校验
+
+on:
+  pull_request:
+    paths:
+      - 'data/entries/**'
+      - 'scripts/**'
+      - 'schema/**'
+      - 'site/**'
+  push:
+    branches: [main]
+    paths:
+      - 'data/entries/**'
+      - 'scripts/**'
+      - 'site/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 需要完整历史才能和 base 分支做 diff
+
+      - name: 找出本 PR 改动的条目文件
+        id: changed
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            git fetch --quiet origin "$BASE_REF"
+            FILES=$(git diff --name-only --diff-filter=ACMR "origin/$BASE_REF"...HEAD \
+                    -- 'data/entries/*.json' | tr '\n' ' ')
+          else
+            FILES=""
+          fi
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+          echo "本次改动：${FILES:-（无，将全库校验）}"
+
+      - name: 校验
+        env:
+          FILES: ${{ steps.changed.outputs.files }}
+        run: python3 scripts/validate.py $FILES
+
+      - name: 前端自检
+        run: python3 scripts/check_frontend.py
+
+      - name: 校验索引是否同步
+        run: |
+          python3 scripts/build_index.py
+          if ! git diff --quiet -- data/index.json site/data/index.js; then
+            echo "::warning::index.json 不同步。运行 python3 scripts/build_index.py 后提交产物。"
+          fi

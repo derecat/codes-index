@@ -1,0 +1,53 @@
+name: 部署站点
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'site/**'
+      - 'scripts/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 重新生成索引
+        run: python3 scripts/build_index.py
+
+      - name: 组装静态产物
+        run: |
+          mkdir -p _site/data
+          cp -r site/. _site/
+          cp data/index.json _site/data/index.json
+          ls -la _site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

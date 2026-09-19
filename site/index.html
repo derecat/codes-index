@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0e">
+<title>车牌库 · 社区推荐清单</title>
+<meta name="description" content="社区共同维护的番号推荐清单。只收录元数据与推荐理由，不存资源。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="brand">
+      <span class="mark">🎟️</span>
+      <h1>车牌库</h1>
+      <span class="badge" id="countBadge">…</span>
+    </div>
+    <p class="tagline">大家共同维护的「值不值得看」清单 · 只沉淀元数据与理由，不存资源</p>
+
+    <div class="search">
+      <span class="search-icon">⌕</span>
+      <input id="q" type="search" autocomplete="off" spellcheck="false"
+             placeholder="搜番号 / 标题 / 演员 / 标签…">
+      <button id="clearBtn" class="clear" hidden aria-label="清空">✕</button>
+    </div>
+
+    <p class="stats" id="stats"></p>
+  </div>
+</header>
+
+<nav class="toolbar">
+  <div class="chips" id="tagChips"></div>
+  <div class="tools">
+    <button id="randomBtn" class="btn ghost" title="随便来一部">🎲 随机</button>
+    <select id="sortSel" class="btn select" aria-label="排序">
+      <option value="new">最新入库</option>
+      <option value="score">评分最高</option>
+      <option value="hot">推荐人数</option>
+      <option value="code">按番号</option>
+    </select>
+  </div>
+</nav>
+
+<main>
+  <div class="activeBar" id="activeBar" hidden></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>
+    <div class="empty-mark">空</div>
+    <p id="emptyText">没有匹配的记录</p>
+    <p class="hint">换个关键词，或者去<a id="newIssue" href="#" target="_blank" rel="noopener">提一个投稿 Issue</a></p>
+  </div>
+  <div class="loading" id="loading">正在加载索引…</div>
+</main>
+
+<footer class="foot">
+  <span>数据：<a id="repoLink" href="#" target="_blank" rel="noopener">GitHub 仓库</a> · 讨论：<a id="discussLink" href="#" target="_blank" rel="noopener">Discussions</a> · MIT / CC0</span>
+  <span id="generatedAt"></span>
+</footer>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="dialog" id="dialog" role="dialog" aria-modal="true"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="data/index.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

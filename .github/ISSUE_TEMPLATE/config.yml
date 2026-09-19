@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 想先聊聊 / 提功能建议
+    url: https://github.com/derecat/codes-index/discussions
+    about: 玩法讨论、功能建议、数据错误反馈请走 Discussions，别用投稿表单
+  - name: ⚖️ 权利人异议
+    url: https://github.com/derecat/codes-index/issues/new?title=%5B%E5%BC%82%E8%AE%AE%5D+
+    about: 如果你是权利人，认为某条记录侵权，请点这里，我们 24 小时内删除

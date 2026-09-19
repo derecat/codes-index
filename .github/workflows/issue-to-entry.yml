@@ -1,0 +1,87 @@
+name: 投稿自动入库
+
+# 触发点：Issue 被打开或编辑时
+on:
+  issues:
+    types: [opened, edited]
+
+# 默认 GITHUB_TOKEN 是只读的，必须显式声明写权限，否则 git push 会 403
+permissions:
+  contents: write
+  issues: write
+
+# 同一条 Issue 串行处理，避免连点两次投稿造成竞态
+concurrency:
+  group: ingest-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    # 只处理打了 submission 标签、且仍然打开着的 Issue
+    if: >-
+      contains(github.event.issue.labels.*.name, 'submission') &&
+      github.event.issue.state == 'open'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 拉取仓库
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          # 需要 push 回仓库，用默认的 GITHUB_TOKEN 即可（靠上面的 permissions 提权）
+          persist-credentials: true
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 解析投稿并写入数据
+        id: ingest
+        env:
+          # 关键：用户输入通过 env 传入，绝不拼进 run 脚本里（防止命令注入）
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: python3 scripts/issue_to_entry.py
+
+      - name: 重建索引
+        run: python3 scripts/build_index.py
+
+      - name: 校验全库
+        run: python3 scripts/validate.py
+
+      - name: 提交并推送
+        run: |
+          git config user.name  "codes-bot"
+          git config user.email "codes-bot@users.noreply.github.com"
+          git add data site/data
+          if git diff --staged --quiet; then
+            echo "数据没有变化，跳过提交"
+          else
+            git commit -m "feat(data): ingest #${{ github.event.issue.number }} (${{ steps.ingest.outputs.code }})"
+            git push
+          fi
+
+      - name: 回执成功并关闭 Issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} --comment \
+            "✅ 已$( [ '${{ steps.ingest.outputs.verb }}' = '更新' ] && echo 更新 || echo 收录 ) **${{ steps.ingest.outputs.code }}**，当前累计 ${{ steps.ingest.outputs.total }} 人推荐。
+
+          站点会在 1 分钟内部署完成：https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+
+      - name: 回执失败
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body \
+            "❌ 自动入库失败了，常见原因：
+
+          - 推荐理由少于 4 个字，或者只写了「好看」这类空话
+          - 来源链接里带了资源/网盘/磁力关键词（本项目一律拒收）
+          - 番号格式不对，例如写成了「SSIS 00123 无修版」
+
+          **直接编辑本 Issue 内容即可自动重试**，不需要重开一个。"

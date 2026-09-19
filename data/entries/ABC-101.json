@@ -1,0 +1,32 @@
+{
+  "code": "ABC-101",
+  "title": "雨夜电车",
+  "actors": [
+    "示例演员甲"
+  ],
+  "tags": [
+    "剧情",
+    "悬疑",
+    "长镜头"
+  ],
+  "studio": "演示厂牌",
+  "releaseDate": "2023-06-12",
+  "sourceUrl": "https://example.com/works/abc-101",
+  "score": 8.7,
+  "recommendations": [
+    {
+      "login": "demo-bot",
+      "reason": "全片只有一个场景，靠对话推进了九十分钟，最后十分钟的镜头运动是教科书级别。",
+      "score": 9.0,
+      "at": "2026-09-19T03:21:01Z"
+    },
+    {
+      "login": "another-fan",
+      "reason": "台词密度极高，二刷才发现前半段每句闲聊都在埋伏笔。适合戴耳机看。",
+      "score": 8.4,
+      "at": "2026-09-19T03:21:01Z"
+    }
+  ],
+  "createdAt": "2026-09-19T03:21:01Z",
+  "updatedAt": "2026-09-19T03:21:01Z"
+}

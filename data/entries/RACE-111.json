@@ -1,0 +1,22 @@
+{
+  "code": "RACE-111",
+  "title": "并发测试A",
+  "actors": [],
+  "tags": [
+    "并发测试"
+  ],
+  "studio": "",
+  "releaseDate": "",
+  "sourceUrl": "",
+  "score": 8.0,
+  "recommendations": [
+    {
+      "login": "derecat",
+      "reason": "这是一条并发投稿测试，验证两个 job 同时运行时不会因为 git push 冲突而失败。",
+      "score": 8.0,
+      "at": "2026-09-19T03:36:14Z"
+    }
+  ],
+  "createdAt": "2026-09-19T03:36:14Z",
+  "updatedAt": "2026-09-19T03:36:14Z"
+}

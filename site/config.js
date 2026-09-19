@@ -1,24 +1,25 @@
-/* 站点配置 —— 只改这个文件，不用动 app.js
- * 部署前请把下面三项换成你自己的。
- */
+/* 站点配置 —— 只改这个文件，不用动 app.js */
 window.__SITE_CONFIG__ = {
-  /* 你的仓库地址（站点右上角和「提投稿」按钮会用到） */
+  /* 仓库地址 */
   repo: 'https://github.com/derecat/codes-index',
 
   /* 评论功能，基于 giscus（把 GitHub Discussions 当成评论后端，免费、零服务器）
-   * 配置步骤：
-   *   1. 仓库 Settings → General → Features 勾上 Discussions
-   *   2. Discussions 里新建分类，名字随意（建议「条目讨论」），
-   *      类型选 Announcements —— 只有机器人能发帖，防止灌水
-   *   3. 安装 giscus App：https://github.com/apps/giscus → 授权本仓库
-   *   4. 打开 https://giscus.app ，填入仓库名和分类名，
-   *      页面底部会生成 repoId / categoryId，复制过来贴上即可
-   * 留空则不显示评论区，只显示一个「去 GitHub 讨论」的入口。
+   *
+   * 已经帮你填好了 repoId / categoryId。唯一还差一步：
+   * 安装 giscus App → https://github.com/apps/giscus
+   *   Install → 选择 derecat/codes-index → 完成授权
+   * 装完之后评论区立刻可用（刷新页面即可）。
+   *
+   * 用的是 Announcements 分类：只有维护者能开新帖，但任何人都能回复。
+   * 讨论串由 giscus 在第一条评论时自动创建，标题就是番号本身。
+   *
+   * 想换成别的分类也行：在 Discussions 里建好分类后，
+   * 用 GraphQL 查它的 id（见 README「评论区」一节），替换下面两项即可。
    */
   giscus: {
-    repo: '',            // 形如 'yourname/codes-index'
-    repoId: '',          // 形如 'R_kgDOLxxxxxxx'
-    category: '条目讨论',  // Discussions 分类名
-    categoryId: ''       // 形如 'DIC_kwDOLxxxxxxx'
+    repo: 'derecat/codes-index',
+    repoId: 'R_kgDOUg5ttg',
+    category: 'Announcements',
+    categoryId: 'DIC_kwDOUg5tts4DF7UM'
   }
 };

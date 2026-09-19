@@ -141,31 +141,28 @@ git push -u origin main
   > 不打开这个，`issue-to-entry.yml` 里的 `git push` 会以 403 收场 —— 这是新手最常见的坑。
 - **Pages 源**：`Settings → Pages → Source` 选 **GitHub Actions**（不是 "Deploy from a branch"）。
 
-### 3. 打开 Discussions 并配置评论（可选但强烈建议）
+### 3. 开启评论（只差一步）
 
-**先开启 Discussions**：`Settings → General → Features → Discussions` 打勾。
+**✅ 已完成**：Discussions 已开启，`repoId` / `categoryId` 已填进 `site/config.js`，
+用的是 **Announcements** 分类 —— 只有维护者能开新帖，但任何人都能回复，
+从源头掐掉灌水。
 
-然后去 `Discussions` 标签页新建一个分类：
+**⬜ 还需你操作**：安装 giscus App，这一步必须走网页 OAuth，没法用 API 代劳。
 
-- 名字：`条目讨论`（或你喜欢的）
-- 类型：**Announcements** ← 关键，这个类型只有维护者和机器人能发新帖，从源头掐掉灌水
+👉 **https://github.com/apps/giscus** → Install → 选择 `codes-index` → 授权完成。
 
-接着装 **giscus App**：打开 https://github.com/apps/giscus → Install → 只授权这一个仓库。
+> 装完后刷新页面，随便点开一个番号，评论区就活了。
+> 第一条评论会自动为该番号创建一个 Discussion 串，标题就是番号。
+>
+> **没装之前也不会报错** —— 评论区会显示一个「去 GitHub 讨论」的入口，不留空白。
 
-最后去 https://giscus.app 填你的仓库名和分类名，页面底部会生成两段 id，
-粘进 `site/config.js`：
+想换分类的话，用 GraphQL 查分类 id：
 
-```js
-giscus: {
-  repo: 'yourname/codes-index',
-  repoId: 'R_kgDOLxxxxxxx',
-  category: '条目讨论',
-  categoryId: 'DIC_kwDOLxxxxxxx'
-}
+```bash
+curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+  -H "Content-Type: application/json" https://api.github.com/graphql \
+  -d '{"query":"query{repository(owner:\"derecat\",name:\"codes-index\"){id discussionCategories(first:10){nodes{id name}}}}"}'
 ```
-
-> **不配也能用。** 四项缺任意一项，评论区会自动变成「去 GitHub 讨论」的链接，
-> 不会留一片空白。你可以先把站点跑起来，之后再补。
 
 ### 4. 占位符
 

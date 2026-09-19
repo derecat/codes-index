@@ -50,9 +50,5 @@ jobs:
       - name: 前端自检
         run: python3 scripts/check_frontend.py
 
-      - name: 校验索引是否同步
-        run: |
-          python3 scripts/build_index.py
-          if ! git diff --quiet -- data/index.json site/data/index.js; then
-            echo "::warning::index.json 不同步。运行 python3 scripts/build_index.py 后提交产物。"
-          fi
+      - name: 确认索引能正常重建
+        run: python3 scripts/build_index.py

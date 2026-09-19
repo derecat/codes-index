@@ -33,7 +33,8 @@ jobs:
           mkdir -p _site/data
           cp -r site/. _site/
           cp data/index.json _site/data/index.json
-          ls -la _site
+          echo "--- 产物 ---"
+          find _site -type f | sort
 
       - uses: actions/configure-pages@v5
 

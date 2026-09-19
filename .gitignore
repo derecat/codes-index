@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 .venv/
 _backup/
+data/index.json
+site/data/index.js

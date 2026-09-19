@@ -57,13 +57,27 @@ def main():
     if "--bg: #0b0b0e" in css or "--tx: #e9e9ef" in css:
         errors.append("style.css 仍是暗色主题，亮色改造没生效")
 
+    # hidden 失效自检（踩过的坑，见 style.css 里的注释）
+    if "[hidden]" not in css:
+        errors.append("style.css 缺少全局 [hidden] { display: none !important; } 兜底规则")
+
+    hidden_els = set(re.findall(r'<(?:div|span|section|nav|p)\b[^>]*\bid="([^"]+)"[^>]*\bhidden\b', html))
+    hidden_els |= set(re.findall(r'<(?:div|span|section|nav|p)\b[^>]*\bhidden\b[^>]*\bid="([^"]+)"', html))
+    for el in sorted(hidden_els):
+        # 找出这个 id 对应的 CSS 块，看是否声明了 display
+        block = re.search(r'#' + re.escape(el) + r'\s*\{([^}]*)\}', css) or \
+                re.search(r'\.' + re.escape(el) + r'\s*(?:,[^{]*)?\{([^}]*)\}', css)
+        if block and re.search(r'\bdisplay\s*:', block.group(1)):
+            if "[hidden]" not in css:
+                errors.append(f"#{el} 同时有 hidden 属性和 display 声明，hidden 会失效（缺全局兜底规则）")
+
     for w in warnings:
         print(f"⚠️  {w}")
     for e in errors:
         print(f"❌ {e}")
 
     print(f"\n检查 {len(js_ids)} 个 DOM 引用 · {len(js_classes)} 个动态 class · "
-          f"{len(errors)} 个错误 · {len(warnings)} 个警告")
+          f"{len(hidden_els)} 个 hidden 元素 · {len(errors)} 个错误 · {len(warnings)} 个警告")
     if errors:
         return 1
     print("✅ 前端自检通过")

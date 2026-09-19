@@ -22,6 +22,17 @@
 
 * { box-sizing: border-box; }
 
+/* ⚠️ 全局兜底，别删。
+ *
+ * HTML 的 hidden 属性是靠浏览器默认样式表的 display:none 生效的，
+ * 而任何写了 display: flex / grid 的作者样式都会把它顶掉 ——
+ * 表现就是「明明设了 hidden，元素还是显示出来」。
+ *
+ * 本项目踩过这个坑：.overlay 写了 display:grid，导致遮罩层在页面
+ * 一加载就铺满全屏（整页 backdrop-filter 模糊 + 中间一个空白圆角框），
+ * 看起来像网站坏了。用 !important 一劳永逸，新写组件时也不会再犯。 */
+[hidden] { display: none !important; }
+
 html { -webkit-text-size-adjust: 100%; }
 
 body {
@@ -359,6 +370,7 @@ mark {
   padding: 20px;
   animation: fade .18s ease;
 }
+
 @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
 
 .dialog {
